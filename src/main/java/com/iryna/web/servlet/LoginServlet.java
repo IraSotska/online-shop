@@ -3,6 +3,7 @@ package com.iryna.web.servlet;
 import com.iryna.creator.HtmlCreator;
 import com.iryna.loader.SettingsLoader;
 import com.iryna.security.SecurityService;
+import com.iryna.service.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,8 @@ import java.util.Map;
 public class LoginServlet extends HttpServlet {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private SecurityService securityService;
-    private SettingsLoader settingsLoader;
-
-    public LoginServlet(SecurityService securityService) {
-        this.securityService = securityService;
-    }
+    private SecurityService securityService = ServiceLocator.getService(SecurityService.class);
+    private SettingsLoader settingsLoader = ServiceLocator.getService(SettingsLoader .class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -39,9 +36,5 @@ public class LoginServlet extends HttpServlet {
             log.info("Login successful");
             response.sendRedirect("/products");
         }
-    }
-
-    public void setSettingsLoader(SettingsLoader settingsLoader) {
-        this.settingsLoader = settingsLoader;
     }
 }

@@ -3,19 +3,17 @@ package com.iryna.web.servlet;
 import com.iryna.creator.HtmlCreator;
 import com.iryna.entity.Product;
 import com.iryna.service.ProductService;
-
+import com.iryna.service.ServiceLocator;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditProductServlet extends HttpServlet {
 
-    private ProductService productService;
+    private ProductService productService = ServiceLocator.getService(ProductService.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -38,9 +36,5 @@ public class EditProductServlet extends HttpServlet {
 
         productService.updateProduct(product);
         resp.sendRedirect("/products");
-    }
-
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
     }
 }

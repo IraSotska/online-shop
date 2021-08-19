@@ -2,6 +2,7 @@ package com.iryna.web.servlet;
 
 import com.iryna.creator.HtmlCreator;
 import com.iryna.service.ProductService;
+import com.iryna.service.ServiceLocator;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,11 +13,7 @@ import java.util.Map;
 
 public class ProductListServlet extends HttpServlet {
 
-    private ProductService productService;
-
-    public ProductListServlet(ProductService productService) {
-        this.productService = productService;
-    }
+    private ProductService productService = ServiceLocator.getService(ProductService.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

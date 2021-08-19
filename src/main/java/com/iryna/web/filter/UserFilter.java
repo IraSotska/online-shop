@@ -2,6 +2,7 @@ package com.iryna.web.filter;
 
 import com.iryna.entity.Role;
 import com.iryna.security.SecurityService;
+import com.iryna.service.ServiceLocator;
 import com.iryna.web.parser.CookieParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class UserFilter implements Filter {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private SecurityService securityService;
+    private SecurityService securityService = ServiceLocator.getService(SecurityService.class);
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -42,9 +43,5 @@ public class UserFilter implements Filter {
     @Override
     public void destroy() {
 
-    }
-
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
     }
 }

@@ -2,6 +2,7 @@ package com.iryna.web.filter;
 
 import com.iryna.security.SecurityService;
 import com.iryna.security.Session;
+import com.iryna.service.ServiceLocator;
 import com.iryna.web.parser.CookieParser;
 
 import javax.servlet.*;
@@ -11,11 +12,7 @@ import java.io.IOException;
 
 public class SecurityFilter implements Filter {
 
-    private SecurityService securityService;
-
-    public SecurityFilter(SecurityService securityService) {
-        this.securityService = securityService;
-    }
+    private SecurityService securityService = ServiceLocator.getService(SecurityService.class);
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

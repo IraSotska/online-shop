@@ -1,6 +1,7 @@
 package com.iryna.web.servlet;
 
 import com.iryna.security.SecurityService;
+import com.iryna.service.ServiceLocator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -10,11 +11,7 @@ import java.io.IOException;
 
 public class LogoutServlet extends HttpServlet {
 
-    private SecurityService securityService;
-
-    public LogoutServlet(SecurityService securityService) {
-        this.securityService = securityService;
-    }
+    private SecurityService securityService = ServiceLocator.getService(SecurityService.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

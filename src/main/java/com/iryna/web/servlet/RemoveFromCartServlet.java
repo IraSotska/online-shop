@@ -1,5 +1,6 @@
 package com.iryna.web.servlet;
 
+import com.iryna.service.ServiceLocator;
 import com.iryna.service.UserService;
 import com.iryna.web.parser.CookieParser;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 
 public class RemoveFromCartServlet extends HttpServlet {
 
-    private UserService userService;
+    private UserService userService = ServiceLocator.getService(UserService .class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -18,9 +19,5 @@ public class RemoveFromCartServlet extends HttpServlet {
         String token = CookieParser.getTokenFromCookies(req.getCookies());
         userService.removeProductFromChart(token, Integer.parseInt(req.getParameter("id")));
         resp.sendRedirect("/cart");
-    }
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
     }
 }
