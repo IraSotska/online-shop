@@ -18,6 +18,8 @@ public class UserService {
     }
 
     public void addProductToChart(String token, int productId) {
+        System.out.println("token " + token);
+        System.out.println(securityService);
         List<Product> cart = securityService.getChartByToken(token);
         cart.add(productService.findById(productId));
     }
@@ -26,7 +28,7 @@ public class UserService {
         return userDao.getUserByName(name);
     }
 
-    public void setJdbcUserDao(UserDao userDao) {
+    public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 

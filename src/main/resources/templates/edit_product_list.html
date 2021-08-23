@@ -22,10 +22,10 @@
                     <a class="nav-link active" aria-current="page" href="/products">Products list</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/create">Add product</a>
+                    <a class="nav-link" href="/products/create">Add product</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/product/editor">Edit product list</a>
+                    <a class="nav-link" href="/products/edit">Edit product list</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/cart">Chart</a>
@@ -54,13 +54,13 @@
             <td>${product.productDescription}</td>
             <td>${product.creationDate}</td>
             <td>
-                <form action="/product/edit" method="GET">
+                <form action="/products/edit/product" method="GET">
                     <input type="hidden" name="id" value="${product.id}"/>
                     <button type="submit">Edit</button>
                 </form>
             </td>
             <td>
-                <form action="/product/remove" method="POST">
+                <form action="/products/remove" method="POST">
                     <input type="hidden" name="id" value="${product.id}"/>
                     <button type="submit">Delete</button>
                 </form>

@@ -34,7 +34,7 @@ public class ServiceLocator {
         securityService.setSettingsLoader(settingsLoader);
         securityService.setUserService(userService);
         securityService.setPasswordEncryptor(passwordEncryptor);
-        userService.setJdbcUserDao(jdbcUserDao);
+        userService.setUserDao(jdbcUserDao);
         userService.setSecurityService(securityService);
         userService.setProductService(productService);
         productService.setProductDao(jdbcProductDao);

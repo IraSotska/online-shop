@@ -19,10 +19,10 @@
                     <a class="nav-link active" aria-current="page" href="/products">Products list</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/create">Add product</a>
+                    <a class="nav-link" href="/products/create">Add product</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/product/editor">Edit product list</a>
+                    <a class="nav-link" href="/products/edit">Edit product list</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Logout</a>
@@ -33,7 +33,7 @@
 </nav>
 <body>
 <div class="container">
-    <form action="/create" method="POST">
+    <form action="/products/create" method="POST">
         Product name: <input type="text" name="productName"/>
         Description: <input type="text" name="productDescription"/>
         Product price: <input type="text" name="productPrice"/>
