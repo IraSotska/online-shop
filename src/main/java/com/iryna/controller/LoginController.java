@@ -1,6 +1,5 @@
 package com.iryna.controller;
 
-import com.iryna.creator.HtmlCreator;
 import com.iryna.loader.SettingsLoader;
 import com.iryna.security.SecurityService;
 import org.slf4j.Logger;
@@ -9,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -31,15 +29,15 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    protected void getLoginPage(HttpServletResponse response) throws IOException {
-
-        Map<String, Object> data = new HashMap<>();
-        response.getWriter().write(HtmlCreator.generatePage(data, "/login.html"));
+    protected String getLoginPage() {
+        return "login";
     }
 
     @PostMapping("/login")
-    protected void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String token = securityService.login(request.getParameter("name"), request.getParameter("password"));
+    protected void login(@RequestParam String name,
+                         @RequestParam String password,
+                         HttpServletResponse response) throws IOException {
+        String token = securityService.login(name, password);
         if (token != null) {
             Cookie cookie = new Cookie("user-token", token);
             cookie.setMaxAge(settingsLoader.getTimeToLiveSession());

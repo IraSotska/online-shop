@@ -1,6 +1,5 @@
 package com.iryna.controller;
 
-import com.iryna.creator.HtmlCreator;
 import com.iryna.entity.Product;
 import com.iryna.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,50 +7,35 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
-    ProductController(ProductService productService){
+    ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping
-    protected String findAll(HttpServletResponse response, Model model) throws IOException {
-
-//        response.setContentType("text/html;charset=utf-8");
-//        Map<String, Object> templateData = new HashMap<>();
-//        templateData.put("products", productService.findAll());
+    protected String findAll(Model model) {
         model.addAttribute("products", productService.findAll());
-
-//        response.getWriter().println(HtmlCreator.generatePage(templateData, "/product_list.html"));
-        return "templates/product_list.html";
+        return "product_list";
     }
 
     @GetMapping("/search")
-    @ResponseBody
-    protected String search(@RequestParam String searchingProduct) {
-
-        Map<String, Object> templateData = new HashMap<>();
-        templateData.put("products", productService.getSearchedProducts(searchingProduct));
-        String responce = (HtmlCreator.generatePage(templateData, "/product_list.html"));
-        return responce;
+    protected String search(@RequestParam String searchingProduct, Model model) {
+        model.addAttribute("products", productService.getSearchedProducts(searchingProduct));
+        return "product_list";
     }
 
     @GetMapping("/create")
-    protected void createProduct(HttpServletResponse response) throws IOException {
-
-        Map<String, Object> data = new HashMap<>();
-        response.getWriter().write(HtmlCreator.generatePage(data, "/add_product_page.html"));
+    protected String createProduct() {
+        return "add_product_page";
     }
 
     @PostMapping("/create")
@@ -70,42 +54,37 @@ public class ProductController {
 
     @PostMapping("/remove")
     protected void removeProduct(@RequestParam Long id, HttpServletResponse resp) throws IOException {
-
         productService.removeProduct(id);
         resp.sendRedirect("/products/edit");
     }
 
     @GetMapping("/edit")
-    protected void editProductList(HttpServletResponse resp) throws IOException {
-
-        resp.setContentType("text/html;charset=utf-8");
-        Map<String, Object> templateData = new HashMap<>();
-        templateData.put("products", productService.findAll());
-        resp.getWriter().println(HtmlCreator.generatePage(templateData, "/edit_product_list.html"));
+    protected String editProductList(Model model) {
+        model.addAttribute("products", productService.findAll());
+        return "edit_product_list";
     }
 
     @GetMapping("/edit/product")
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        resp.setContentType("text/html;charset=utf-8");
-        Map<String, Object> templateData = new HashMap<>();
-        templateData.put("product", productService.findById(Integer.parseInt(req.getParameter("id"))));
-        resp.getWriter().println(HtmlCreator.generatePage(templateData, "/edit_product.html"));
+    protected String doGet(@RequestParam Integer id, Model model) {
+        model.addAttribute("product", productService.findById(id));
+        return "edit_product";
     }
 
     @PostMapping("/edit/product")
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(@RequestParam String name,
+                          @RequestParam Long id,
+                          @RequestParam Double price,
+                          @RequestParam String description,
+                          HttpServletResponse resp) throws IOException {
 
         Product product = Product.builder()
-                .name(req.getParameter("name"))
-                .id(Long.parseLong(req.getParameter("id")))
-                .price(Double.parseDouble(req.getParameter("price")))
-                .productDescription(req.getParameter("description"))
+                .name(name)
+                .id(id)
+                .price(price)
+                .productDescription(description)
                 .build();
 
         productService.updateProduct(product);
         resp.sendRedirect("/products");
     }
-
-
 }
