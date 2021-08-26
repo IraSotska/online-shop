@@ -3,99 +3,54 @@ package com.iryna.db.jdbc;
 import com.iryna.db.ProductDao;
 import com.iryna.db.mapper.ProductRowMapper;
 import com.iryna.entity.Product;
+import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class JdbcProductDao implements ProductDao {
 
     private static final String GET_ALL_PRODUCTS_QUERY = "SELECT * FROM products;";
-    private static final ProductRowMapper ROW_MAPPER = new ProductRowMapper();
-    private DataSource dataSource;
+    private static final String DELETE_QUERY = "DELETE FROM products WHERE id = ?";
+    private static final String UPDATE_PRODUCT_QUERY = "UPDATE products SET name = ?, price = ?," +
+            " product_description = ?, creation_date = ? WHERE id = ?";
+    private static final String ADD_PRODUCT_QUERY = "INSERT INTO products(name, price, product_description, " +
+            "creation_date) VALUES (?, ?, ?, ?);";
+    private static final String FIND_PRODUCT_BY_ID_QUERY = "SELECT name, product_description, price, " +
+            "creation_date FROM products WHERE id = ?;";
 
-    public JdbcProductDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private static final ProductRowMapper PRODUCT_ROW_MAPPER = new ProductRowMapper();
+    private JdbcTemplate jdbcTemplate;
 
     public List<Product> findAll() {
-
-        List<Product> result = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(GET_ALL_PRODUCTS_QUERY)) {
-            while (resultSet.next()) {
-                result.add(ROW_MAPPER.mapRow(resultSet));
-            }
-        } catch (SQLException throwables) {
-            throw new RuntimeException(throwables);
-        }
-        return result;
+        return jdbcTemplate.query(GET_ALL_PRODUCTS_QUERY, PRODUCT_ROW_MAPPER);
     }
 
     @Override
     public Product findById(int id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT name, product_description, price, creation_date FROM products WHERE id = ?;")) {
-            preparedStatement.setInt(1, id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                Product product = null;
-                while (resultSet.next()) {
-                    product = Product.builder()
-                            .id(id)
-                            .name(resultSet.getString("name"))
-                            .price(resultSet.getDouble("price"))
-                            .creationDate(resultSet.getTimestamp("creation_date").toLocalDateTime())
-                            .productDescription(resultSet.getString("product_description"))
-                            .build();
-                }
-                return product;
-            }
-        } catch (SQLException throwables) {
-            throw new RuntimeException(throwables);
-        }
+        return jdbcTemplate.queryForObject(FIND_PRODUCT_BY_ID_QUERY, new Object[]{id}, (resultSet, rowNum) ->
+                Product.builder()
+                        .id(id)
+                        .name(resultSet.getString("name"))
+                        .price(resultSet.getDouble("price"))
+                        .creationDate(resultSet.getTimestamp("creation_date").toLocalDateTime())
+                        .productDescription(resultSet.getString("product_description"))
+                        .build());
     }
 
     public void addProduct(Product product) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO products(name, price, product_description, creation_date) VALUES (?, ?, ?, ?);")) {
-            preparedStatement.setString(1, product.getName());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setString(3, product.getProductDescription());
-            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.execute();
-        } catch (SQLException exception) {
-            throw new RuntimeException(exception);
-        }
+        jdbcTemplate.update(ADD_PRODUCT_QUERY, product.getName(), product.getPrice(), product.getProductDescription(),
+                new Timestamp(System.currentTimeMillis()));
     }
 
     public void updateProduct(Product product) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "UPDATE products SET name = ?, price = ?, product_description = ?, creation_date = ? WHERE id = ?")) {
-            preparedStatement.setString(1, product.getName());
-            preparedStatement.setDouble(2, product.getPrice());
-            preparedStatement.setString(3, product.getProductDescription());
-            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.setDouble(5, product.getId());
-            preparedStatement.execute();
-        } catch (SQLException exception) {
-            throw new RuntimeException(exception);
-        }
+        jdbcTemplate.update(UPDATE_PRODUCT_QUERY, product.getName(), product.getPrice(), product.getProductDescription(),
+                new Timestamp(System.currentTimeMillis()), product.getId());
     }
 
     public void removeProduct(long id) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "DELETE FROM products WHERE id = ?")) {
-            preparedStatement.setLong(1, id);
-            preparedStatement.execute();
-        } catch (SQLException exception) {
-            throw new RuntimeException(exception);
-        }
+        jdbcTemplate.update(DELETE_QUERY, id);
     }
 }

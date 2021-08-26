@@ -4,10 +4,13 @@ import com.iryna.db.UserDao;
 import com.iryna.entity.Product;
 import com.iryna.entity.User;
 import com.iryna.security.SecurityService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 public class UserService {
 
+    @Autowired
     private UserDao userDao;
     private SecurityService securityService;
     private ProductService productService;

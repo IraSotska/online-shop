@@ -1,31 +1,26 @@
-package com.iryna.controller;
+package com.iryna.web.controller;
 
 import com.iryna.entity.Product;
 import com.iryna.security.Session;
 import com.iryna.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
+@AllArgsConstructor
 @Controller
 @RequestMapping("/cart")
 public class CartController {
 
     private final UserService userService;
 
-    @Autowired
-    CartController(UserService userService) {
-        this.userService = userService;
-    }
-
     @GetMapping
-    protected String getCartBySession(HttpServletRequest req, Model model) {
+    public String getCartBySession(HttpServletRequest req, Model model) {
 
         Session session = (Session) req.getAttribute("session");
         if (session != null) {
@@ -36,20 +31,16 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    protected void addToCart(@CookieValue("user-token") String token,
-                             @RequestParam Integer id,
-                             HttpServletResponse resp) throws IOException {
-
+    public String addToCart(@CookieValue("user-token") String token,
+                             @RequestParam Integer id) {
         userService.addProductToChart(token, id);
-        resp.sendRedirect("/products");
+        return "redirect:/products";
     }
 
     @PostMapping("/remove")
-    protected void removeFromCart(@CookieValue("user-token") String token,
-                                  @RequestParam Integer id,
-                                  HttpServletResponse resp) throws IOException {
-
+    public String removeFromCart(@CookieValue("user-token") String token,
+                                  @RequestParam Integer id) {
         userService.removeProductFromChart(token, id);
-        resp.sendRedirect("/cart");
+        return "redirect:/cart";
     }
 }

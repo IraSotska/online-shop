@@ -1,12 +1,13 @@
 package com.iryna.db.mapper;
 
 import com.iryna.entity.Product;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-public class ProductRowMapper {
+public class ProductRowMapper implements RowMapper {
     public Product mapRow(ResultSet resultSet) throws SQLException {
         long id = resultSet.getLong("id");
         String name = resultSet.getString("name");
@@ -21,5 +22,10 @@ public class ProductRowMapper {
                 .creationDate(localDateTime)
                 .productDescription(productDescription)
                 .build();
+    }
+
+    @Override
+    public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+        return mapRow(resultSet);
     }
 }

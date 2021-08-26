@@ -25,22 +25,22 @@
 
     <bean id="securityService" class="com.iryna.security.SecurityService">
         <property name="passwordEncryptor" ref="passwordEncryptor"/>
-        <property name="settingsLoader" ref="settingsLoader"/>
+<!--        <property name="settingsLoader" ref="settingsLoader"/>-->
         <property name="userService" ref="userService"/>
     </bean>
 
     <bean id="passwordEncryptor" class="com.iryna.security.PasswordEncryptor"/>
 
     <bean id="settingsLoader" class="com.iryna.loader.SettingsLoader">
-        <constructor-arg value="config.properties"/>
+        <constructor-arg value="application.properties"/>
     </bean>
 
     <bean id="jdbcProductDao" class="com.iryna.db.jdbc.JdbcProductDao">
-        <constructor-arg ref="dataSource"/>
+<!--        <constructor-arg ref="dataSource"/>-->
     </bean>
 
     <bean id="userDao" class="com.iryna.db.jdbc.JdbcUserDao">
-        <constructor-arg ref="dataSource"/>
+<!--        <constructor-arg ref="dataSource"/>-->
     </bean>
 
     <bean id="dataSource" class="org.postgresql.ds.PGSimpleDataSource">
@@ -65,6 +65,20 @@
         </property>
     </bean>
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/application.properties"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+<!--    <bean id="dtSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">-->
+<!--        <property name="dbUrl" value="${db.url}" />-->
+<!--        <property name="dbUser" value="${db.user}" />-->
+<!--        <property name="dbPassword" value="${db.password}" />-->
+<!--        <property name="timeToLiveSession" value="${timeToLiveSession}" />-->
+<!--    </bean>-->
     <mvc:annotation-driven/>
 
 </beans>
